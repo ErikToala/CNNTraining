@@ -1,44 +1,53 @@
+
 import numpy as np
 from keras.preprocessing.image import load_img, img_to_array
 from keras.models import load_model
 
+import tkinter as tk
+from tkinter import ttk
+from PIL import Image, ImageTk
+from tkinter import messagebox as messagebok
+from tkinter.filedialog import askopenfilename
+
+
+app = tk.Tk()
+app.geometry('200x200')
+app['bg'] = '#0059b3'
+app.title("Clasificador de recipientes")
+
 modelo = './modelo/structureModelo.h5'
 layerWeights = './modelo/layerWeights.h5'
-model = load_model(modelo)
-model.load_weights(layerWeights)
+
 labels = ["Aluminum","Cardboard","Ceramics","Crystal","Mud","Natural","Paper","Plastic","Unicel","Wood"]
-#labels = ["Crystal","Cardboard","Ceramics","Aluminum","Wood","Natural","Paper","Plastic","Unicel","Mud"]
 
 def Training(file):
-  x = load_img(file, target_size=(320, 320))
+  model = load_model(modelo)
+  model.load_weights(layerWeights)
+  x = load_img(file, target_size=(120, 120))
   x = img_to_array(x)
   x = np.expand_dims(x, axis=0)
   array = model.predict(x)
   result = array[0]
   print(result)
   answer = np.argmax(result)
-  if answer == 0:
-    print(labels[0])
-  elif answer == 1:
-    print(labels[1])
-  elif answer == 2:
-    print(labels[2])
-  elif answer == 3:
-    print(labels[3])
-  elif answer == 4:
-    print(labels[4])
-  elif answer == 5:
-    print(labels[5])
-  elif answer == 6:
-    print(labels[6])
-  elif answer == 7:
-    print(labels[7])
-  elif answer == 8:
-    print(labels[8])
-  elif answer == 9:
-    print(labels[9])
-
-  return answer
+  print(labels[answer])
+  label = tk.Label(app, text=labels[answer], font="none 12 bold")
+  label.grid(row=3, column=2, sticky="n")
+  return labels[answer]
 
 
-Training('natural01.jpg')
+def extractImage ():
+  '''
+  filename = askopenfilename()
+  print(filename)
+  if(filename!=""):
+    '''
+  Training('Aluminio.jpg')
+
+button = tk.Button(app, text="Analizar imágen", command= extractImage)
+button.grid(row=0, column=0)
+
+
+
+app.mainloop()
+
